@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// TODO: structs, global variables, etc.
 typedef struct ListNode
 {
 	int val;
@@ -21,7 +20,7 @@ static int insertElement(int value) {
 	new_node -> next = NULL;
 
 
-	if (head == NULL) //leere Liste
+	if (head == NULL) //Liste ist leer
 	{
 		head = new_node;
 		return value;
@@ -52,7 +51,20 @@ static int insertElement(int value) {
 }
 
 static int removeElement(void) {
-	// TODO: implement me!
+	if (head == NULL) //Liste ist leer
+	{
+		return -1;
+	}
+	else //head zeigt garantiert auf ein Element
+	{
+		node_t *deleteme = head; //merke den Kopf als ältestes Element
+		int value = deleteme -> val;
+
+		head = head ->next; //neuer Kopf der Liste
+		
+		free(deleteme); //gibt Speicher vom zu löschenden Element frei
+		return value;
+	}
 	return -1;
 }
 
@@ -64,8 +76,13 @@ int main (int argc, char* argv[]) {
 
 	printf("remove: %d\n", removeElement());
 	printf("remove: %d\n", removeElement());
-
+	
 	// TODO: add more tests
+	printf("insert 0: %d\n", insertElement(0));
+	printf("remove: %d\n", removeElement());
+	printf("insert 0: %d\n", insertElement(0));
+	printf("remove: %d\n", removeElement());
+	printf("remove: %d\n", removeElement());
 
 	exit(EXIT_SUCCESS);
 }
