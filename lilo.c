@@ -34,6 +34,7 @@ static int insertElement(int value) {
 		{
 			if (current -> val == value) //Wert existiert bereits in der Liste
 			{
+				free(new_node); //allokierter Speicher wird nicht gebraucht und freigegeben
 				return -1;
 			}
 			current = current -> next;
@@ -41,6 +42,7 @@ static int insertElement(int value) {
 
 		if (current -> val == value) //Value vom letzten Knoten überprüfen
 			{
+				free(new_node);
 				return -1;
 			}
 
