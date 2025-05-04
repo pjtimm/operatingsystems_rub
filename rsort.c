@@ -4,7 +4,7 @@
 
 int reverse_comp(const void *a, const void *b);
 
-int main(){
+int main(void){
     #define INITIAL_CAPACTIY 100
    
     char **words = malloc(INITIAL_CAPACTIY * sizeof(char *)); //pointer to point at the individual words which are of type (char *)
@@ -43,7 +43,7 @@ int main(){
                 perror("malloc for individual word failed");
                 exit(EXIT_FAILURE);
             }
-            strlcpy(words[word_count],BUFFER,string_length); //copy word into the words array
+            strcpy(words[word_count],BUFFER); //copy word into the words array
             word_count++;
         }
         line_num++;
@@ -68,3 +68,4 @@ int reverse_comp(const void *a, const void *b){ //arguments as required by qsort
     const char *wordB = *(const char **)b;
     return strcmp(wordB, wordA);  //positive if wordB > wordA
 }
+
