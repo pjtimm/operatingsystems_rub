@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 int reverse_comp(const void *a, const void *b);
 
@@ -19,20 +20,43 @@ int main(void){
     int line_num = 1; //keep seperate account of lines and words as some lines may be skipped an not count towards the word count
 
     //reading the file
-    while(fgets(BUFFER,102,stdin)){
-        if(strchr(BUFFER,'\n') == NULL && !feof(stdin)){ //Check if line exceeds character limit
-            fprintf(stderr, "Line %d exceeded 100 charactes", line_num);
+    while(1){
+
+        fflush(stdout);  // flush any buffered output
+
+        errno = 0;
+
+
+        if (!fgets(BUFFER, sizeof(BUFFER), stdin)) {
+            if (ferror(stdin)) {
+                fprintf(stderr, "Error reading input on line %d: %s\n", line_num, strerror(errno));
+                exit(EXIT_FAILURE);
+            }
+            break; // EOF reached
+        }
+
+        if (strchr(BUFFER, '\n') == NULL && !feof(stdin)) {
+            fprintf(stderr, "Line %d exceeded 100 characters\n", line_num);
+            // line was too long — must clear the rest
+            int ch;
+            while ((ch = getchar()) != '\n' && ch != EOF);
         }
 
         else{
             //provide more memory if needed
             if (word_count >= capacity) {
                 capacity *= 2;
-                words = realloc(words, capacity * sizeof(char *));
-                if (!words) {
+                char **temp = realloc(words, capacity * sizeof(char *));
+                if (!temp) {
                     perror("realloc failed");
+                    // free already allocated memory before exit
+                    for (int i = 0; i < word_count; i++) {
+                        free(words[i]);
+                    }
+                    free(words);
                     exit(EXIT_FAILURE);
                 }
+                words = temp;
             }
 
             //storing the word
@@ -41,6 +65,11 @@ int main(void){
             words[word_count] = malloc(string_length); 
             if(!words[word_count]){
                 perror("malloc for individual word failed");
+                // free memory
+                for (int i = 0; i < word_count; i++) {
+                    free(words[i]);
+                }
+                free(words);
                 exit(EXIT_FAILURE);
             }
             strcpy(words[word_count],BUFFER); //copy word into the words array
